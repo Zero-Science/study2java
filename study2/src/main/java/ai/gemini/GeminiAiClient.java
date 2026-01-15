@@ -25,11 +25,14 @@ public class GeminiAiClient implements AiClient {
 				.apiKey(this.config.getApiKey())
 				.build();
 
+		
+		logger.info("Model:" + config.getModel());
+		logger.info("Prompt:" + prompt);
 		try {
 			// 2. 调用模型生成内容
 			// 模型名推荐使用 "gemini-1.5-flash" (快且便宜) 或 "gemini-1.5-pro" (更强大)
 			GenerateContentResponse response = client.models.generateContent(
-					"gemini-1.5-flash",
+					this.config.getModel(),
 					prompt,
 					null);
 

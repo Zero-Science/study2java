@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 import org.apache.log4j.Logger;
 
+import ai.chatgpt.ChatgptAiClient;
 import ai.deepseek.DeepSeekAiClient;
 import ai.doubao.DoubaoAiClient;
 import ai.gemini.GeminiAiClient;
@@ -38,6 +39,10 @@ public class AiClientFactory {
 				apiConfig = new ApiConfig(ai, PropertiesReader.GEMINI_MODEL, PropertiesReader.GEMINI_APIKEY, null);
 				logger.info("gemini开始连接");
 				return new GeminiAiClient(apiConfig);
+			case "chatgpt":
+				apiConfig = new ApiConfig(ai, PropertiesReader.CHATGPT_MODEL, PropertiesReader.CHATGPT_APIKEY, null);
+				logger.info("chatgpt开始连接");
+				return new ChatgptAiClient(apiConfig);
 			default:
 				throw new IllegalArgumentException("暂未导入: " + ai);
 			}

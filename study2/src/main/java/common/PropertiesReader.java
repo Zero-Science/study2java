@@ -32,6 +32,10 @@ public class PropertiesReader {
 
 	public static String GEMINI_APIKEY;
 
+	public static String CHATGPT_MODEL;
+
+	public static String CHATGPT_APIKEY;
+	
 	public static String UPD_FLG;
 
 	static Logger logger = Logger.getLogger(PropertiesReader.class);
@@ -60,6 +64,9 @@ public class PropertiesReader {
 			GEMINI_MODEL = prop.getProperty("gemini.model");
 			GEMINI_APIKEY = prop.getProperty("gemini.apiKey");
 
+			CHATGPT_MODEL = prop.getProperty("chatgpt.model");
+			CHATGPT_APIKEY = prop.getProperty("chatgpt.apiKey");
+			
 		} catch (Exception ex) {
 			logger.error("プロパティ読み取りエラー発生しました。", ex);
 			ex.printStackTrace();
