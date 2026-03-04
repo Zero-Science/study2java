@@ -1,14 +1,13 @@
 package opt;
 
+import ai.common.AiClientFactory;
+import ai.doubao.DoubaoAiClient;
+import db.DBManager;
+import org.apache.log4j.Logger;
+import util.HtmlUtil;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import org.apache.log4j.Logger;
-
-import ai.common.AiClient;
-import ai.common.AiClientFactory;
-import db.DBManager;
-import util.HtmlUtil;
 
 public class OptTask06 extends AiTaskExecutor {
 	private Logger logger = Logger.getLogger(OptTask06.class);
@@ -16,6 +15,12 @@ public class OptTask06 extends AiTaskExecutor {
 	String api;
 	String no;
 	String div;
+
+//	public OptTask06(String api, String no, String div) {
+//		this.api = api;
+//		this.no = no;
+//		this.div = div;
+//	}
 
 	private void init() {
 		this.api = this.parameter[0];
@@ -54,10 +59,24 @@ public class OptTask06 extends AiTaskExecutor {
 
 	}
 
-	protected String callAPI(String prompt) {
-		AiClient client = AiClientFactory.getClient(this.api);
+	protected String callAPI(String prompt) throws Exception {
+		DoubaoAiClient client = (DoubaoAiClient) AiClientFactory.getClient(this.api);
 		this.logger.info("ai连接成功");
-		return client.call(prompt);
+
+		ArrayList<Object> list = new ArrayList<Object>();
+		StringBuffer query = new StringBuffer();
+
+		query.append("SELECT t.\"番号\", t.\"枝番号\" , t.\"拡張子\" , t.\"元ファイル\" , t.\"縮略ファイル500\" , t.\"縮略ファイル200\" , t.\"縮略ファイル50\" , t.\"コメント\"   ");
+		query.append("FROM  \"AI質問情報管理_添付資料\" t ");
+		query.append("WHERE t.\"番号\" = ? ");
+		list.add(this.no);
+		ArrayList<HashMap<String, Object>> result = DBManager.select(query.toString(), list);
+		if(result == null || result.isEmpty()) {
+			return client.call(prompt);
+		}else{
+			return client.fileAnalysis(result,prompt);
+		}
+
 	}
 
 	protected Object analyzeResponse(String response) {
@@ -69,10 +88,10 @@ public class OptTask06 extends AiTaskExecutor {
 
 			if ("文章".equals(div)) {
 				returnResponse = response;
-			} else if ("HTML".equals(div)) {
+			} else if ("HTML".equals(div) ||"html".equals(div)) {
 				returnResponse = HtmlUtil.toHtml(response);
 
-			} else if ("JSON".equals(div)) {
+			} else if ("JSON".equals(div)||"json".equals(div)) {
 				returnResponse = response;
 			}
 
