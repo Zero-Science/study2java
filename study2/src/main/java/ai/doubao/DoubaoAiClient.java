@@ -24,38 +24,9 @@ public class DoubaoAiClient implements AiClient {
 	public DoubaoAiClient(ApiConfig config) {
 		this.config = config;
 	}
-	AIFileAnalysis  aiFileAnalysis = new AIFileAnalysis();
-	@Override
-	public String call(String prompt) {
+	private AIFileAnalysis  aiFileAnalysis = new AIFileAnalysis();
 
-		ArkService arkService = ArkService.builder()
-				.apiKey(config.getApiKey())
-				.baseUrl(config.getUrl())
-				.build();
 
-		List<ChatMessage> chatMessages = new ArrayList<>();
-		ChatMessage userMessage = ChatMessage.builder()
-				.role(ChatMessageRole.USER)
-				.content(prompt)
-				.build();
-		chatMessages.add(userMessage);
-
-		// 创建聊天完成请求
-		ChatCompletionRequest request = ChatCompletionRequest.builder()
-				.model(config.getModel())
-				.messages(chatMessages)
-				.build();
-
-		String content = (String) arkService.createChatCompletion(request)
-				.getChoices()
-				.get(0)
-				.getMessage()
-				.getContent();
-
-		return content;
-	}
-
-//	文件解析
 	/**
 	 * 文件分析主方法
 	 * @param result 数据库查询结果，每条记录包含 "拡張子", "元ファイル", "枝番号"（可选）
@@ -63,7 +34,9 @@ public class DoubaoAiClient implements AiClient {
 	 * @return 模型返回的文本结果
 	 * @throws Exception 处理异常
 	 */
-	public String fileAnalysis(ArrayList<HashMap<String, Object>> result, String prompt) throws Exception {
+
+	@Override
+	public String call(ArrayList<HashMap<String, Object>> result, String prompt) throws Exception {
 		// 第一步：校验扩展名
 		for (int i = 0; i < result.size(); i++) {
 			HashMap<String, Object> record = result.get(i);
@@ -134,6 +107,38 @@ public class DoubaoAiClient implements AiClient {
 			}
 		}
 	}
+
+	@Override
+	public String call(String prompt) {
+		ArkService arkService = ArkService.builder()
+				.apiKey(config.getApiKey())
+				.baseUrl(config.getUrl())
+				.build();
+
+		List<ChatMessage> chatMessages = new ArrayList<>();
+		ChatMessage userMessage = ChatMessage.builder()
+				.role(ChatMessageRole.USER)
+				.content(prompt)
+				.build();
+		chatMessages.add(userMessage);
+
+		// 创建聊天完成请求
+		ChatCompletionRequest request = ChatCompletionRequest.builder()
+				.model(config.getModel())
+				.messages(chatMessages)
+				.build();
+
+		String content = (String) arkService.createChatCompletion(request)
+				.getChoices()
+				.get(0)
+				.getMessage()
+				.getContent();
+
+		return content;
+	}
+
+
+
 
 
 

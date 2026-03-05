@@ -1,25 +1,25 @@
 package ai.deepseek;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.log4j.Logger;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import ai.common.AiClient;
 import ai.common.ApiConfig;
 import ai.deepseek.response.ChatRequest;
 import ai.deepseek.response.ChatResponse;
 import ai.deepseek.response.Message;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.volcengine.ark.runtime.model.responses.request.CreateResponsesRequest;
+import com.volcengine.ark.runtime.model.responses.response.ResponseObject;
+import com.volcengine.ark.runtime.service.ArkService;
+import okhttp3.*;
+import org.apache.log4j.Logger;
+import util.AIFileAnalysis;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class DeepSeekAiClient implements AiClient {
 
@@ -29,7 +29,7 @@ public class DeepSeekAiClient implements AiClient {
 
 	private final OkHttpClient client;
 	private final ObjectMapper objectMapper;
-
+	private AIFileAnalysis  aiFileAnalysis = new AIFileAnalysis();
 	public DeepSeekAiClient(ApiConfig config) {
 		this.config = config;
 		this.client = new OkHttpClient.Builder()
@@ -45,7 +45,7 @@ public class DeepSeekAiClient implements AiClient {
 		List<Message> messages = new ArrayList<>();
 		messages.add(new Message("user", userMessage));
 
-		ChatRequest request = new ChatRequest("deepseek-chat", messages);
+		ChatRequest request = new ChatRequest(config.getModel(), messages);
 		String requestBody = objectMapper.writeValueAsString(request);
 
 		Request httpRequest = new Request.Builder()
@@ -86,7 +86,7 @@ public class DeepSeekAiClient implements AiClient {
 		List<Message> messages = new ArrayList<>();
 		messages.add(new Message("user", prompt));
 
-		ChatRequest request = new ChatRequest("deepseek-chat", messages);
+		ChatRequest request = new ChatRequest(config.getModel(), messages);
 		String requestBody = null;
 		try {
 			requestBody = objectMapper.writeValueAsString(request);
@@ -129,4 +129,11 @@ public class DeepSeekAiClient implements AiClient {
 		}
 		return "错误";
 	}
+
+	@Override
+	public String call(ArrayList<HashMap<String, Object>> result,String prompt) throws Exception {
+		return "";
+	}
+
+
 }

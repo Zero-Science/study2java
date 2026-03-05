@@ -13,6 +13,9 @@ import com.openai.models.responses.ResponseOutputMessage.Content;
 import ai.common.AiClient;
 import ai.common.ApiConfig;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class ChatgptAiClient implements AiClient {
 
 	private static Logger logger = Logger.getLogger(ChatgptAiClient.class);
@@ -25,43 +28,49 @@ public class ChatgptAiClient implements AiClient {
 
 	@Override
 	public String call(String prompt) {
-		
+
 		OpenAIClient client = OpenAIOkHttpClient.builder()
-			    .apiKey(config.getApiKey())
-			    .build();
+				.apiKey(config.getApiKey())
+				.build();
 
-	      ResponseCreateParams params = ResponseCreateParams.builder()
-	                .input(prompt)
-	                .model(config.getModel())
-	                .build();
+		ResponseCreateParams params = ResponseCreateParams.builder()
+				.input(prompt)
+				.model(config.getModel())
+				.build();
 
-	        Response response = client.responses().create(params);
+		Response response = client.responses().create(params);
 
-	        String text = extractText(response);
-	        
-	        logger.info(text);
+		String text = extractText(response);
+
+		logger.info(text);
 
 		return  text;
 
 	}
-	
+
+	@Override
+	public String call(ArrayList<HashMap<String, Object>> result,String prompt) {
+		return "";
+	}
+
+
 	public static String extractText(Response response) {
-	    StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 
-	    for (ResponseOutputItem item : response.output()) {
+		for (ResponseOutputItem item : response.output()) {
 
-	        // 只处理 message 类型
-	        if (item.message().isPresent()) {
-	            ResponseOutputMessage message = item.message().get();
+			// 只处理 message 类型
+			if (item.message().isPresent()) {
+				ResponseOutputMessage message = item.message().get();
 
-	            for (Content content : message.content()) {
-	                if (content.isOutputText()){
-	                    sb.append(content.outputText().get().text());
-	                }
-	            }
-	        }
-	    }
+				for (Content content : message.content()) {
+					if (content.isOutputText()){
+						sb.append(content.outputText().get().text());
+					}
+				}
+			}
+		}
 
-	    return sb.toString();
+		return sb.toString();
 	}
 }

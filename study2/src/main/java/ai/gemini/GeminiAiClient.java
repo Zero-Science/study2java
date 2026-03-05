@@ -8,6 +8,9 @@ import com.google.genai.types.GenerateContentResponse;
 import ai.common.AiClient;
 import ai.common.ApiConfig;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class GeminiAiClient implements AiClient {
 
 	private static Logger logger = Logger.getLogger(GeminiAiClient.class);
@@ -19,13 +22,18 @@ public class GeminiAiClient implements AiClient {
 	}
 
 	@Override
+	public String call(ArrayList<HashMap<String, Object>> result, String prompt) throws Exception {
+		return "";
+	}
+
+	@Override
 	public String call(String prompt) {
 
 		Client client = Client.builder()
 				.apiKey(this.config.getApiKey())
 				.build();
 
-		
+
 		logger.info("Model:" + config.getModel());
 		logger.info("Prompt:" + prompt);
 		try {
@@ -48,4 +56,6 @@ public class GeminiAiClient implements AiClient {
 		return "";
 
 	}
+
+
 }

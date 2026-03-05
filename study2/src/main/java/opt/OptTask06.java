@@ -1,7 +1,7 @@
 package opt;
 
+import ai.common.AiClient;
 import ai.common.AiClientFactory;
-import ai.doubao.DoubaoAiClient;
 import db.DBManager;
 import org.apache.log4j.Logger;
 import util.HtmlUtil;
@@ -60,7 +60,7 @@ public class OptTask06 extends AiTaskExecutor {
 	}
 
 	protected String callAPI(String prompt) throws Exception {
-		DoubaoAiClient client = (DoubaoAiClient) AiClientFactory.getClient(this.api);
+		AiClient client = AiClientFactory.getClient(this.api);
 		this.logger.info("ai连接成功");
 
 		ArrayList<Object> list = new ArrayList<Object>();
@@ -74,8 +74,9 @@ public class OptTask06 extends AiTaskExecutor {
 		if(result == null || result.isEmpty()) {
 			return client.call(prompt);
 		}else{
-			return client.fileAnalysis(result,prompt);
+			return client.call(result,prompt);
 		}
+
 
 	}
 
